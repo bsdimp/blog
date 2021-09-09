@@ -1,5 +1,5 @@
 
-A historical review of sys/types.h
+# A historical review of sys/types.h
 
 Since the late 70s, a unix system defines its basic types in the `sys/types.h` header file.
 This file has been a staple of many prorgrams over the years.
