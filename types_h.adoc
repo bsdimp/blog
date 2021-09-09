@@ -1,0 +1,274 @@
+
+A historical review of sys/types.h
+
+Since the late 70s, a unix system defines its basic types in the `sys/types.h` header file.
+This file has been a staple of many prorgrams over the years.
+The Linux kernel, in contrast, does not have a file by this name (it's currently in `linux/types.h`)
+
+Recently, the question about why so many headersin FreeBSD were not self contained came up.
+Here's what I was able to find by examining artifacts like 6th and 7th Edition Unix sources, BSD releases and code from AT&T.
+I'll explore some of the trends that developed over the years (and try to document when header guards first appeared).
+I also looked at different standards text and other systems with good history like Linux to try to understand how we got here today.
+
+So to understand why it was created, we have to take a closer look at the state of Unix porting prior to `sys/types.h` existing.
+I'll look at only one header file that shows some of the changes.
+Other parts needed more extensive changes, and studying them all is beyond the scope of this post.
+
+## Pre-history: 6th Edition Unix and Porting
+
+The 6th Edition of Unix was released in May, 1975.
+It spread quickly amongst all the Universites that were running prior versions of Unix (mostly 5th Edition which had been the basis of Networking Unix).
+Many in the acedemic community wanted to run Unix, but some universities were unable to afford even the relatively modest prices of the PDP-11.
+Others had existing hardware that was powerful enough to run Unix.
+The status quo for these people, however, posed some real problems.
+
+If we look at any of the header files in Unix that define some kind of structure layour in the 6th Edition, you'll see that it looks like the following taken from inod.h (which describe the on-disk format of inodes):
+
+.stock V6 ino.h
+[source,C]
+-----
+/*
+ * Inode structure as it appears on
+ * the disk. Not used by the system,
+ * but by things like check, df, dump.
+ */
+struct  inode
+{
+        int     i_mode;
+        char    i_nlink;
+        char    i_uid;
+        char    i_gid;
+        char    i_size0;
+        char    *i_size1;
+        int     i_addr[8];
+        int     i_atime[2];
+        int     i_mtime[2];
+};
+
+/* modes */
+#define IALLOC  0100000
+#define IFMT    060000
+#define         IFDIR   040000
+#define         IFCHR   020000
+#define         IFBLK   060000
+#define ILARG   010000
+#define ISUID   04000
+#define ISGID   02000
+#define ISVTX   01000
+#define IREAD   0400
+#define IWRITE  0200
+#define IEXEC   0100
+-----
+
+All the types are basic types. The V6 C compiler didn't have `long` or `short`, just `char`, `int` and `float`.
+All constants are in octal.
+Both of these match the underlying PDP-11 architecture.
+In fact, there was no `unsigned` or `signed` modifiers either.
+Well, the compiler recognized the `long` type and had basic support for arithmetic and type conversions.
+Nothing in the V6 tree used `long` and it is not clear the support was complete and bug free.
+We see in the above example cases where access and modification times would have benefitted from a `long` type.
+Finally, with so few types, the compiler had no support for `typedef`.
+So the C language lacked the tools, at this time, to do things in a portable way.
+
+The layout of the ino structure was dictated by the alignment rules for the PDP-11.
+Since The 6th Edition of Unix only ran on the PDP-11 and the very closely related LSI-11, there was no ambiguty.
+
+However, life didn't stay simple for long.
+
+### Three ports of Unix Introduce New Features
+
+The three earliest ports to other architectures that have surviving records all were started using the 6th Edition release as the base.
+There were two ports to the Intersil 32-bit computers, and two to the IBM VM/370 32-bit computer.
+Richard Miller at the University of Wollongong did a port to the Intersil 7/32 starting in April 1976.
+Steve Johnson and Dennis Ritchie at Bell Labs did a port to the Intersil 8/32 starting in 1977.
+Tom Lyon at Princeton did a port to IBM VM/370 starting in 1975.
+We are fortunate enough to have at least partial copies of the external ports to examine today.
+
+#### Princeton IBM VM/370 6th Edition Port
+
+Tom Lyon, Joseph Skudlarek, Peter Eichenberger and Eric Schmidt ported 6th Edition Unix to the IBM VM / 370 system.
+This port started at Princeton University in 1975 and completed in 1978.
+Tom Lyon joined Amdahl in 1978 and by early 1979 had the 6th Edition working on the Amdahl 470.
+By late 1979, the 7th Edition was ported.
+(https://en.wikipedia.org/wiki/Amdahl_UTS)
+
+https://dl.acm.org/doi/pdf/10.5555/1074100.1074464#:~:text=Four%20bytes%20comprise%20a%20word,and%20on%20strings%20of%20bytes.
+The basic unit of the System/360 and newer machines was the 8-bit byte.
+4 bytes comprised a word.
+Addressing was 24 bits in the S/360 and later expanded to 31 bits.
+The Bell Labs 360 C compiler was used, and it followed this convention.
+(see https://akapugs.blog/2018/05/12/370unixpart1/)
+
+If we take a look at the ino.h from the surviving tapes from this period, we see that a number of changes needed to be made to the header:
+
+.Princeton IBM VM/370 V6 port ino.h
+[source,C]
+-----
+/*
+ * Inode structure as it appears on
+ * the disk. Not used by the system,
+ * but by things like check, df, dump.
+ */
+ /* inode is actually now 64 bytes long on 370 */
+#define ISIZE   64
+#define ISIZEW  (ISIZE/4)
+#define IPERBLK (BLKSIZE/ISIZE)
+#define IOFFSET (2*IPERBLK-1)
+#define IADDRSIZ        8
+#define ISPARESZ        3
+
+struct  inode
+{
+        int     i_mode;
+        char    i_nlink;
+        char    i_uid;
+        char    i_gid;
+ /*     char    i_size0;
+        char    *i_size1;
+ */
+        char    i_fil;
+        int     i_size;
+        int     i_addr[IADDRSIZ];
+ /*     int     i_atime[2];
+        int     i_mtime[2];
+ */
+        int     i_atimei;
+        int     i_mtimei;
+        int     i_spare[ISPARESZ];
+};
+
+/* modes */
+... omitted ...
+-----
+
+Some additional padding is needed, a pointer was replaced with an int for the size of the file, times were changed to ints (since on this platform they were 32 bits) and some padding was added at the end.
+This changed the size and made it impossible to move disks between a PDP-11 and an IBM system.
+However, since such hardware movement was all but impossible, the Princeton port chose to use a more convenient size.
+With the larger basic units, `struct inode` now took up 64 bytes instead of the 32 that the original PDP-11 code consumed.
+
+#### The Wollongong Port
+
+<add some history here> Intersil 7/32
+
+.Wollongong's Intersil V6 port ino.h
+[source,C]
+-----
+/*
+ * Inode structure as it appears on
+ * the disk. Not used by the system,
+ * but by things like check, df, dump.
+ */
+struct  inode
+{
+        int     i_mode;
+        char    i_nlink;
+        char    i_uid;
+        char    i_gid;
+        char    i_size0;
+        char    *i_size1;
+        int     i_addr[8];
+        int     i_atime[2];
+        int     i_mtime[2];
+        int     i_filler;       /***/
+};
+
+/* modes */
+... omitted ...
+-----
+
+Here too, the inode is 64 bytes.
+It also needs to have padding at the end.
+It does not omit the pointer like the IBM port, nor does it collapse the atime/mtime down into a single int, so it is wasting 8 bytes here due to that.
+Given the speed of the Wollongong port, it's not surprising that details like this look a little sloppy in hindsight.
+The sloppiness, however, was more the fault of the C language than Dr Miller or others doing the port.
+
+#### Bell Labs Intersil Port
+
+In early 1977, Bell Labs bought an Intersil 8/32 for the purpose of making C and Unix more portable.
+https://www.bell-labs.com/usr/dmr/www/portpap.html details their experience and findings.
+From these efforts were born the portable C compile.
+The original DMR compiler produced code only for the PDP-11.
+Steven Johnson wrote the portable C compiler that targetted the IBM System/370 under both OS and TSS, the Honeywell 6000, the Interdata 8/32, the SEL86, the Data General Nova and Eclipse, the DEC VAX-11/780, a Bell System processor and the Intel 8086.
+
+A number of language features were added to the C compiler as a result.
+Unions were added so that data of different types can share the same storage.
+Typedefs were added to allow the kernel to be more easily parameterized.
+By using the logical names for things like inode numbers, disk blocks, time stamps, etc, the kernel could easily be retartted to different systems where diferent sizes for these items were more appropriate.
+The `lint` program was created to catch logical errors (like passing the wrong args to a function), though this has been greatly expanded and merged within the compiler itself starting in the early 1990s when machines were large enough.
+Finally, the portable C compiler was the first one to implement `short` and `unsigned` types.
+The dmr compiler was also augmented with these extensions and leaked out of Bell Labs as the 'typesetter C' or 'V6.5 C compiler'.
+
+In a very real way, the portability efforts around the Unix kernel evolved the C language in very powerful ways: integers grew real sizes and type aliasing became a thing.
+The Wollongong Intersil port has a C compiler that has these concepts in it, though they weren't used in the port.
+The Princeton IBM port does not, most likely because they requested Bell Labs IBM 360 compiler prior to these concepts being implemented by Steven Johnson.
+
+These efforts lead to the parameterization of the Unix kernel.
+This work took place in 1978 and had a big impact on the 7th Edition.
+
+## The 7th Edition
+
+In addition to a number of programmer productivity tools, one of the biggest features of the 7th Edition Unix was its increased portability.
+While the 6th Edition of unix was ported three or four times to new platforms, the 7th Edition was ported to dozens.
+The new C compiler, with new portability features, coupled with a centralized place to declare different kernel types via the typedef mechanism greatly aided portability.
+
+Let's take a look at the ino.h file under 7th Edition Unix
+
+.7th Edition ino.h
+[source,C]
+----
+/*
+ * Inode structure as it appears on
+ * a disk block.
+ */
+struct dinode
+{
+        unsigned short  di_mode;        /* mode and type of file */
+        short   di_nlink;       /* number of links to file */
+        short   di_uid;         /* owner's user id */
+        short   di_gid;         /* owner's group id */
+        off_t   di_size;        /* number of bytes in file */
+        char    di_addr[40];    /* disk block addresses */
+        time_t  di_atime;       /* time last accessed */
+        time_t  di_mtime;       /* time last modified */
+        time_t  di_ctime;       /* time created */
+};
+#define INOPB   8       /* 8 inodes per block */
+/*
+ * the 40 address bytes:
+ *      39 used; 13 addresses
+ *      of 3 bytes each.
+ */
+----
+
+We notice a number of things right away.
+First, there's no plain types at all anymore.
+Next, `short` and even `unsigned short` is used a lot.
+Finally, a number of types are defined elsewhere.
+The only oddness here is the 3-byte disk addresses that are stored in the inode which wasn't typedef'd.
+The syntax at the time would have allowed it, but it wouldn't have allowed for nice arithmetic on 3-byte numbers.
+
+Where are all these types defined?
+They are defined in `sys/types.h`
+
+.7th Edition sys/types.h
+[source,C]
+----
+typedef long            daddr_t;        /* disk address */
+typedef char *          caddr_t;        /* core address */
+typedef unsigned int    ino_t;          /* i-node number */
+typedef long            time_t;         /* a time */
+typedef int             label_t[6];     /* program status */
+typedef int             dev_t;          /* device code */
+typedef long            off_t;          /* offset in file */
+        /* selectors and constructor for device code */
+#define major(x)        (int)(((unsigned)x>>8))
+#define minor(x)        (int)(x&0377)
+#define makedev(x,y)    (dev_t)((x)<<8|(y))
+----
+
+Here 7 basic types are defined.
+These are the most basic types in the system and used extensively in the kernel and system call interface.
+
+There are also no include guards, so this file can be included only once.
+Version 7 is where we first see it included in its manual:
+
