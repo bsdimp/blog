@@ -49,5 +49,6 @@ The second Berkeely Software Distribution (2BSD) was released in mid 1978 accord
 
 # References
 
-[tuhs] TUHS Archive at https://www.tuhs.org/
 [QCU] Salus, Peter H. A quarter century of UNIX. Addison-Wesley Publishing Company, Inc., 1994. ISBN 0-201-54777-5
+
+[tuhs] TUHS Archive at https://www.tuhs.org/
