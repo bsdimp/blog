@@ -16,9 +16,13 @@ The USENIX tapes were a collection of random software that people contributed be
 
 1BSD had a Pascal compiler, the ex editor, a modified yacc for the Pascal compiler, a star trek game (rewritten from earlier BASIC and FORTRAN versions in C) and some experimentals shells (ashell).
 It was released in late 1977, so post-dates 6th Edition Unix but pre-dates the 7th edition.
-There are no copyright markings at all on this tape.
+There are no copyright markings at all on this tape (a case insensitive grep of the TUHS 1BSD archive extracted from https://www.tuhs.org/Archive/Distributions/UCB/1bsd.tar.gz for the word 'copyright' returns no results).
 There are no license to copy granted in files or in  `READ_ME` files.
-As The label on the tape said only:
+Note that the tar file has a number of directories with ar(1) .a files.
+However, this is the old 'binary' ar format from the 6th edition and it needs special tools to extract.
+Even though the format is 'binary', text files are stored without compression so grep will find strings that existed in the source or binary files.
+
+The only clue as to licnese is on the physical lable on the table, which said:
 
  The contents of this tape are
  distributed to UNIX licensees
@@ -28,5 +32,10 @@ As The label on the tape said only:
  the University of California.
 
 so it was targeted specifically at AT&T Unix licensees, but contained no AT&T code.
+The 1BSD license agreeemnt with the University of California appears is hard to find.
+About 65 tapes were produced and shipped.
+They weren't all identical, but had updates applied and were sent out in batches whenever there were enough to do.
 
 ## 2BSD
+
+The second Berkeely Software Distribution (2BSD) 
