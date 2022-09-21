@@ -60,6 +60,7 @@ It too had the following label on the physical tape[TAPE in TUHS.2BSD]:
 and it also contained nominally no AT&T code.
 
 It contained the following programs:
+
  * Mail
  * csh
  * me troff macros
@@ -68,6 +69,7 @@ It contained the following programs:
  * pascal cross reference program
  * termlib (precurser to curses)
  * several misc utilities
+
 Nearly the programs had
 [source,C]
 ----
