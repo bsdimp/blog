@@ -87,6 +87,5 @@ Other than the new copyright markings on each source file, there's nothing new a
 [tuhs] TUHS Archive at https://www.tuhs.org/
 
 [TUHS.1BSD] 1BSD archive at TUHS https://www.tuhs.org/Archive/Distributions/UCB/1bsd.tar.gz
+
 [TUHS.2BSD] 2BSD archive at TUHS https://www.tuhs.org/Archive/Distributions/UCB/2bsd.tar.gz
-
-
