@@ -78,7 +78,7 @@ Nearly the programs had
 prepended to it.
 
 The programs were compiled for V7, but Berkeley's V7 and the programs themselves were on the V7 VAX port (which was later released by Bell Labs as 32V in several versions).[QCU]
-Some V6 compatibility librariefs were provided for installations still running V6 (src/READ_ME in [TUHS.2BSD]) via libretro (src/makefile.v6 in [TUHS.2BSD]).
+Some V6 compatibility libraries were provided for installations still running V6 (src/READ_ME in [TUHS.2BSD]) via -lretro (install.ms in [TUHS.2BSD]).
 
 Other than the new copyright markings on each source file, there's nothing new about copying these files.
 
