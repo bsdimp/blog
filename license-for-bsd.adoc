@@ -22,7 +22,7 @@ Note that the tar file has a number of directories with ar(1) .a files.
 However, this is the old 'binary' ar format from the 6th edition and it needs special tools to extract.
 Even though the format is 'binary', text files are stored without compression so grep will find strings that existed in the source or binary files.
 
-The only clue as to licnese is on the physical lable on the table, which said:
+The only clue as to licnese is on the physical label on the tape, which said[TAPE in TUHS.1BSD]:
 
  The contents of this tape are
  distributed to UNIX licensees
@@ -48,7 +48,7 @@ It was a simpler time.
 The second Berkeely Software Distribution (2BSD) was released in mid 1978 according to Peter Salus' Quarter Century of Unix [QCU].
 The copy in the [TUHS] archive is from May 10, 1979, and was used for this analysis.
 The TUHS 2BSD archive extracted from https://www.tuhs.org/Archive/Distributions/UCB/2bsd.tar.gz[TUHS 2BSD Archive].
-It too had the following label on the physical tape:
+It too had the following label on the physical tape[TAPE in TUHS.2BSD]:
 
  The contents of this tape are
  distributed to UNIX licensees
@@ -76,7 +76,7 @@ Nearly the programs had
 prepended to it.
 
 The programs were compiled for V7, but Berkeley's V7 and the programs themselves were on the V7 VAX port (which was later released by Bell Labs as 32V in several versions).[QCU]
-Some V6 compatibility libraries were provided for installations still running V6 (src/READ_ME in 2BSD) via libretro (src/makefile.v6).
+Some V6 compatibility librariefs were provided for installations still running V6 (src/READ_ME in [TUHS.2BSD]) via libretro (src/makefile.v6 in [TUHS.2BSD]).
 
 Other than the new copyright markings on each source file, there's nothing new about copying these files.
 
@@ -85,3 +85,8 @@ Other than the new copyright markings on each source file, there's nothing new a
 [QCU] Salus, Peter H. A quarter century of UNIX. Addison-Wesley Publishing Company, Inc., 1994. ISBN 0-201-54777-5
 
 [tuhs] TUHS Archive at https://www.tuhs.org/
+
+[TUHS.1BSD] 1BSD archive at TUHS https://www.tuhs.org/Archive/Distributions/UCB/1bsd.tar.gz
+[TUHS.2BSD] 2BSD archive at TUHS https://www.tuhs.org/Archive/Distributions/UCB/2bsd.tar.gz
+
+
