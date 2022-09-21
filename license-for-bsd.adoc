@@ -16,7 +16,7 @@ The USENIX tapes were a collection of random software that people contributed be
 
 1BSD had a Pascal compiler, the ex editor, a modified yacc for the Pascal compiler, a star trek game (rewritten from earlier BASIC and FORTRAN versions in C) and some experimentals shells (ashell).
 It was released in late 1977, so post-dates 6th Edition Unix but pre-dates the 7th edition.
-There are no copyright markings at all on this tape (a case insensitive grep of the TUHS 1BSD archive extracted from https://www.tuhs.org/Archive/Distributions/UCB/1bsd.tar.gz for the word 'copyright' returns no results).
+There are no copyright markings at all on this tape (a case insensitive grep of the TUHS 1BSD archive extracted from https://www.tuhs.org/Archive/Distributions/UCB/1bsd.tar.gz[TUHS 1BSD archive] for the word 'copyright' returns no results).
 There are no license to copy granted in files or in  `READ_ME` files.
 Note that the tar file has a number of directories with ar(1) .a files.
 However, this is the old 'binary' ar format from the 6th edition and it needs special tools to extract.
@@ -46,6 +46,39 @@ It was a simpler time.
 ## 2BSD
 
 The second Berkeely Software Distribution (2BSD) was released in mid 1978 according to Peter Salus' Quarter Century of Unix [QCU].
+The copy in the [TUHS] archive is from May 10, 1979, and was used for this analysis.
+The TUHS 2BSD archive extracted from https://www.tuhs.org/Archive/Distributions/UCB/2bsd.tar.gz[TUHS 2BSD Archive].
+It too had the following label on the physical tape:
+
+ The contents of this tape are
+ distributed to UNIX licensees
+ only, subject to the software
+ agreement you have with Western
+ Electric and an agreement with
+ the University of California.
+
+and it also contained nominally no AT&T code.
+
+It contained the following programs:
+ * Mail
+ * csh
+ * me troff macros
+ * berknet
+ * Pasal Compiler
+ * pascal cross reference program
+ * termlib (precurser to curses)
+ * several misc utilities
+Nearly the programs had
+[source,C]
+----
+/* Copyright (c) 1979 Regents of the University of California */
+----
+prepended to it.
+
+The programs were compiled for V7, but Berkeley's V7 and the programs themselves were on the V7 VAX port (which was later released by Bell Labs as 32V in several versions).[QCU]
+Some V6 compatibility libraries were provided for installations still running V6 (src/READ_ME in 2BSD) via libretro (src/makefile.v6).
+
+Other than the new copyright markings on each source file, there's nothing new about copying these files.
 
 # References
 
