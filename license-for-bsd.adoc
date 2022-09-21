@@ -37,10 +37,17 @@ About 65 tapes were produced and shipped.
 They weren't all identical, but had updates applied and were sent out in batches whenever there were enough to do.
 
 1BSD appears in the TUHS archive based on a donation from Marshall Kirk McKusick of an archival copy of a 1BSD distribution tape from January 19, 1978.
-It also appears on Dr. McKusick's BSD DVD archive.
+It also appears in Dr. McKusick's BSD DVD archive.
 Permission is granted to copy the files in the BSD archive (with some exceptions).
 Dr  McKusick has indicated to me in private conversation that he is distributing 1bsd with permission of the University and imposes no further restriction on its copying (which is why it can appear in the TUHS archive).
 
+It was a simpler time.
+
 ## 2BSD
 
-The second Berkeely Software Distribution (2BSD) 
+The second Berkeely Software Distribution (2BSD) was released in mid 1978 according to Peter Salus' Quarter Century of Unix [QCU].
+
+# References
+
+[tuhs] TUHS Archive at https://www.tuhs.org/
+[QCU] Salus, Peter H. A quarter century of UNIX. Addison-Wesley Publishing Company, Inc., 1994. ISBN 0-201-54777-5
