@@ -82,6 +82,29 @@ Some V6 compatibility libraries were provided for installations still running V6
 
 Other than the new copyright markings on each source file, there's nothing new about copying these files.
 
+## 3BSD
+
+The third Berkeley Software Distribution (3BSD) was released in late 1979[QCU] or early 1980 [TUHS].
+It is a port of 32V to the VAX architecture.
+It includes demand paging.
+
+Theres some new code for demand paging, as well as a number of Berkeley-specific programs (like head) from 2BSD.
+Unlike 2BSD, where all the new files had a
+[source,C]
+----
+/* Copyright (c) 1979 Regents of the University of California */
+----
+prepended to them, only some of the Bereley-added programs have it: as, csh, ex, tracing code for lisp, the pascal compiler, the stdio v6 compat library and libtermlib.
+They are missing from all the programs from 2BSD in its src/ that did not have a subdirectory (compare [src/head.c TUHS.2BSD] to [usr/src/cmd/head.c in TUHS.3BSD]).
+In addition, new drivers that were not in 32V but in 3BSD have no markings.
+It's unclear if UCB wrote these, or if they got them from elsewhere.
+The usr/src/sys/dev/rk.c file appears to be a port of the V7 standalone rk.c driver, while usr/src/sys/dev/rk7.c appears unrelated to anything that was in 7th Edition or V32.
+Most of the rest of 32V is the same as 3BSD, except for the usr/src/sys/sys/vm*.c files added in 3BSD.
+None of these additions have a copyright notice added.
+We do not have a copy of the 3BSD tape label, but presumably it said the same thing as 2BSD.
+
+So it's not a very good job of tracking the Berkeley IP.
+
 # References
 
 [QCU] Salus, Peter H. A quarter century of UNIX. Addison-Wesley Publishing Company, Inc., 1994. ISBN 0-201-54777-5
