@@ -19,12 +19,14 @@ It was released in late 1977, so post-dates 6th Edition Unix but pre-dates the 7
 There are no copyright markings at all on this tape.
 There are no license to copy granted in files or in  `READ_ME` files.
 As The label on the tape said only:
+
  The contents of this tape are
  distributed to UNIX licensees
  only, subject to the software
  agreement you have with Western
  Electric and an agreement with
  the University of California.
+
 so it was targeted specifically at AT&T Unix licensees, but contained no AT&T code.
 
 ## 2BSD
